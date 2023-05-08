@@ -24,7 +24,7 @@ func main() {
 }
 
 func SetupDatabase() error {
-	dbUri := "postgres://a:a@localhost:5432/a"
+	dbUri := "postgres://a:a@localhost:5432/a" // used for this project else should be used in .env
 	var err error
 	db, err = gorm.Open(postgres.Open(dbUri), &gorm.Config{})
 	if err != nil {
@@ -43,7 +43,7 @@ func SetupRoutes(a *fiber.App) {
 		return c.JSON(AllData)
 	})
 	a.Post("/addData", func(c *fiber.Ctx) error {
-		var d Data
+		d := new(Data)
 		if err := c.BodyParser(d); err != nil {
 			c.Status(500).JSON(fiber.Map{"error": "wrongformat"})
 		}
@@ -52,13 +52,13 @@ func SetupRoutes(a *fiber.App) {
 	})
 	a.Put("/updateData/:id", func(c *fiber.Ctx) error {
 		id := c.Params("id")
-		var d Data
+		d := new(Data)
 		db.First(&d, id)
 		return c.JSON(d)
 
 	})
 	a.Delete("/deleteData/:id", func(c *fiber.Ctx) error {
-		var d Data
+		d := new(Data)
 		id := c.Params("id")
 		db.Delete(&d, id)
 		return c.JSON(fiber.Map{
